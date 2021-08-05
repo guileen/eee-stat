@@ -27,15 +27,53 @@ async function download(url, file) {
 	fs.writeFileSync(file, JSON.stringify(texts, '', 2))
 }
 
-async function main() {
-	for(let i =1;i<=64;i++) {
-		console.log('downloading', i)
-		await Promise.all([
-			download('https://www.eee-learning.com/book/eee'+i, 'eee/'+i+'.json'),
-			download('https://www.eee-learning.com/book/wangbe'+fix2Num(i), 'wb/'+i+'.json'),
-		])
-		console.log('downloaded', i)
+async function wb() {
+	for(let i=1;i<=64;i++) {
+		console.log('downloading wb', i)
+		await download('https://www.eee-learning.com/book/wangbe'+fix2Num(i), '王弼注/'+i+'.json')
 	}
+}
+
+async function kyd() {
+	for(let i =1;i<=64;i++) {
+		console.log('downloading 周易正义', i)
+		await download('https://www.eee-learning.com/book/eee-jy'+i, '周易正义[孔颖达疏]/'+i+'.json')
+	}
+}
+
+async function yz() {
+	for(let i =1;i<=64;i++) {
+		console.log('downloading 易传', i)
+		await download('https://www.eee-learning.com/book/eee'+i, '易传/'+i+'.json')
+	}
+}
+
+async function zx() {
+	for(let i =1;i<=64;i++) {
+		console.log('downloading 朱熹', i)
+		await download('https://www.eee-learning.com/book/juicy'+fix2Num(i), '周易本义[朱熹]/'+i+'.json')
+	}
+}
+
+async function ycz() {
+	for(let i =1;i<=64;i++) {
+		console.log('downloading 程頤', i)
+		await download('https://www.eee-learning.com/book/yi-chen-chan'+i, '易程传[程颐]/'+i+'.json')
+	}
+}
+
+async function zyjj() {
+	for(let i =1;i<=64;i++) {
+		console.log('downloading 周易集解', i)
+		await download('https://www.eee-learning.com/book/sunshinyan/'+i, '周易集解/'+i+'.json')
+	}
+}
+
+async function main() {
+	await Promise.all([
+		yz(),wb(),kyd(),
+		zx(),ycz(),zyjj(),
+	])
 }
 
 main()

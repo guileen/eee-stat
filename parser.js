@@ -13,6 +13,7 @@ const TGuaCi = '卦辞'
 const TJiJie = '集解'
 const TShiWen = '释文'
 const TZhu = '注'
+const TShu = '疏'
 const TYao = '爻'
 const TTuan = '彖'
 const TDaXiang = '大象'
@@ -117,10 +118,17 @@ function parseZhu(line) {
 	return parseStartToken(line, ['【注】', '注云：'], TZhu)
 }
 
+function parseShu(line) {
+	return parseStartToken(line, ['疏　正義曰：'], '疏')
+}
+
 function parse(lines) {
 	let root = null
 	let current = null
 	let currentLine = null
+	let hasDaxiang = false
+	let lastYao = 0
+	let zhengyiParent = null
 
 	function parseLine(line) {
 		let res = parseJiJie(line) || parseShiWen(line) || parseBrackets(line) || parseZhu(line)
@@ -153,7 +161,7 @@ function parse(lines) {
 			// 其他忽略
 			return
 		}
-		if(state == TGua || state == TDaXiang || state == TYao) {
+		if(state == TGua || state == TDaXiang || state == TYao || state == TShu) {
 			// 彖
 			if(line.startsWith('《彖》曰：') || line.startsWith('彖曰：')) {
 				currentLine = new Node(TLine, line)
@@ -164,7 +172,7 @@ function parse(lines) {
 				return current
 			}
 		}
-		if(state == TGua || state == TTuan) {
+		if(!hasDaxiang && (state == TGua || state == TTuan || state == TShu)){
 			// 象
 			if(line.startsWith('《象》曰：') || line.startsWith('象曰')) {
 				currentLine = new Node(TLine, line)
@@ -172,10 +180,11 @@ function parse(lines) {
 					type: TDaXiang,
 					lines: [currentLine]
 				}
+				hasDaxiang = true
 				return current
 			}
 		}
-		if(state == TGua || state == TTuan || state == TDaXiang) {
+		if(state == TGua || state == TTuan || state == TDaXiang || state == TShu) {
 			// 初九/初六
 			if(line[0]=='初' && (line[1]=='九' || line[1]=='六')) {
 				currentLine = new Node(TLine, line)
@@ -184,26 +193,27 @@ function parse(lines) {
 					index: 1,
 					lines: [currentLine],
 				}
+				lastYao = 1
 				return current
 			}
 		}
-		if(state == TYao || state == TXiaoXiang) {
+		if(state == TYao || state == TXiaoXiang || state == TShu) {
 			if(
-				(current.index == 5 && line[0]=='上' && (line[1] =='九' || line[1] == '六')) || // 上九/上六
-				(current.index < 5 && (line[0]=='九'||line[0]=='六') && line[1] == '二三四五'[current.index - 1]) || // 六二、九三、六四、九五
-				(current.index == 6 && line[0]=='用' && (line[1] =='九' || line[1] == '六')) // 用九/用六
+				(lastYao == 5 && line[0]=='上' && (line[1] =='九' || line[1] == '六')) || // 上九/上六
+				(lastYao < 5 && (line[0]=='九'||line[0]=='六') && line[1] == '二三四五'[lastYao - 1]) || // 六二、九三、六四、九五
+				(lastYao == 6 && line[0]=='用' && (line[1] =='九' || line[1] == '六')) // 用九/用六
 			){
 				currentLine = new Node(TLine, line)
 				current = {
 					type: TYao,
-					index: current.index+1,
+					index: ++lastYao,
 					lines: [currentLine]
 				}
 				return current
 			}
 		}
-		if(state == TYao) {
-			if(line.startsWith('《象》曰：') || line.startsWith('象曰：')) {
+		if(state == TYao || state == TShu) {
+			if(line.length < 40 && (line.startsWith('《象》曰：') || line.startsWith('象曰：'))) {
 				currentLine = new Node(TLine, line)
 				current = {
 					type: TXiaoXiang,
@@ -221,9 +231,36 @@ function parse(lines) {
 			}
 			return current
 		}
+		if(line.startsWith('疏　正義曰：')) {
+			zyLine = new Node(TLine, line)
+			let zhengyi = {
+				type: TShu,
+				lines: [zyLine]
+			}
+			if(current) {
+				if(current.type == TShu && current.lines.length > 1) {
+					// 上次已经是正义，此次又判断一句为正义，说明前面一句不是正义
+					// 前面的正义应该归为前句
+					let lastLine = current.lines.pop()
+					zhengyiParent.lines.push(lastLine);
+					(lastLine.children || (lastLine.children = [])).push(zhengyi)
+				} else {
+					(currentLine.children || (currentLine.children = [])).push(zhengyi)
+					zhengyiParent = current
+				}
+				// console.log('current', current)
+			}
+			current = zhengyi
+			currentLine = zyLine
+			return
+		}
 
 		if(current) {
 			currentLine = new Node(TLine, line)
+			// 正义特殊处理，太短的文字不是正义，修复乾象传
+			if(current.type == TShu && line.length < 40) {
+				current = zhengyiParent
+			}
 			current.lines.push(currentLine)
 			return
 		}

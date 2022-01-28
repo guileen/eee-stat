@@ -12,7 +12,7 @@ const TGuaDown = '卦下'
 const TGuaCi = '卦辞'
 const TJiJie = '集解'
 const TShiWen = '释文'
-const TZhu = '注云'
+const TZhu = '注'
 const TYao = '爻'
 const TTuan = '彖'
 const TDaXiang = '大象'
@@ -76,13 +76,7 @@ function parseJiJie(line) {
 }
 
 function parseShiWen(line) {
-	if(line.startsWith('［釋文］')) {
-		line = line.substring(4)
-		return {
-			type: TShiWen,
-			text: line,
-		}
-	}
+	return parseStartToken(line, ['［釋文］'], TShiWen)
 }
 
 function parseGuaName(line) {
@@ -107,13 +101,29 @@ function parseBrackets(line) {
 	}
 }
 
+function parseStartToken(line, tokens, type) {
+	for(let token of tokens) {
+		if(line.startsWith(token)) {
+			return {
+				type: type,
+				text: line.substring(token.length),
+				// line: line,
+			}
+		}
+	}
+}
+
+function parseZhu(line) {
+	return parseStartToken(line, ['【注】', '注云：'], TZhu)
+}
+
 function parse(lines) {
 	let root = null
 	let current = null
 	let currentLine = null
 
 	function parseLine(line) {
-		let res = parseJiJie(line) || parseShiWen(line) || parseBrackets(line)
+		let res = parseJiJie(line) || parseShiWen(line) || parseBrackets(line) || parseZhu(line)
 		if(res) {
 			if(currentLine) {
 				(currentLine.children || (currentLine.children = [])).push(res)
@@ -145,7 +155,7 @@ function parse(lines) {
 		}
 		if(state == TGua || state == TDaXiang || state == TYao) {
 			// 彖
-			if(line.startsWith('《彖》曰：')) {
+			if(line.startsWith('《彖》曰：') || line.startsWith('彖曰：')) {
 				currentLine = new Node(TLine, line)
 				current = {
 					type: TTuan,
@@ -156,7 +166,7 @@ function parse(lines) {
 		}
 		if(state == TGua || state == TTuan) {
 			// 象
-			if(line.startsWith('《象》曰：')) {
+			if(line.startsWith('《象》曰：') || line.startsWith('象曰')) {
 				currentLine = new Node(TLine, line)
 				current = {
 					type: TDaXiang,
@@ -193,7 +203,7 @@ function parse(lines) {
 			}
 		}
 		if(state == TYao) {
-			if(line.startsWith('《象》曰：')) {
+			if(line.startsWith('《象》曰：') || line.startsWith('象曰：')) {
 				currentLine = new Node(TLine, line)
 				current = {
 					type: TXiaoXiang,
@@ -203,7 +213,7 @@ function parse(lines) {
 				return current
 			}
 		}
-		if(line.startsWith('《文言》曰：')) {
+		if(line.startsWith('《文言》曰：') || line.startsWith('文言曰：')) {
 			currentLine = new Node(TLine, line)
 			current = {
 				type: TWenYan,
@@ -231,8 +241,17 @@ function parse(lines) {
 	return root
 }
 
-for(let i=1;i<=64;i++) {
-	let lines = require('./周易集解/'+i+'.json')
-	let data = parse(lines)
-	fs.writeFileSync('./data/jijie/'+i+'.json', JSON.stringify(data,'',2))
+function parseEBook(bookName, dataFolder) {
+	for (let i = 1; i <= 64; i++) {
+		let lines = require('./' + bookName + '/' + i + '.json')
+		let data = parse(lines)
+		if(!fs.existsSync(dataFolder)) {
+			fs.mkdirSync(dataFolder)
+		}
+		fs.writeFileSync( dataFolder + '/' + i + '.json', JSON.stringify(data, '', 2))
+	}
 }
+
+parseEBook('周易集解', './data/jijie')
+parseEBook('王弼注', './data/wangzhu')
+parseEBook('周易正义[孔颖达疏]', './data/zhengyi')

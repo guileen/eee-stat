@@ -81,15 +81,21 @@ function parseShiWen(line) {
 }
 
 function parseGuaName(line) {
-	let m = /([\u4dc0-\u4dff])?[\s|　]*([\u4e00-\u9fa5]+)卦[\s|　]*(.)下(.)上/.exec(line)
+	let m = /([\u4dc0-\u4dff])?[\s|　]*([\u4e00-\u9fa5]+)[\s|　]*(.)下(.)上/.exec(line)
 	// let m = /([\u4e00-\u9fa5]+)卦[\s|　]*(.)下(.)上/.exec(line)
-	return m && {
-		type: TGua,
-		fh: m[1],
-		name: m[2],
-		down: m[3],
-		up: m[4],
-		lines: [],
+	if (m) {
+		let name = m[2]
+		if (name.endsWith('卦')) {
+			name = name.substring(0, name.length - 1)
+		}
+		return m && {
+			type: TGua,
+			fh: m[1],
+			name: name,
+			down: m[3],
+			up: m[4],
+			lines: [],
+		}
 	}
 }
 

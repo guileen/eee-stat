@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { JSDOM } = require('jsdom');
 
 const fuhao = '䷀,䷁,䷂,䷃,䷄,䷅,䷆,䷇,䷈,䷉,䷊,䷋,䷌,䷍,䷎,䷏,䷐,䷑,䷒,䷓,䷔,䷕,䷖,䷗,䷘,䷙,䷚,䷛,䷜,䷝,䷞,䷟,䷠,䷡,䷢,䷣,䷤,䷥,䷦,䷧,䷨,䷩,䷪,䷫,䷬,䷭,䷮,䷯,䷰,䷱,䷲,䷳,䷴,䷵,䷶,䷷,䷸,䷹,䷺,䷻,䷼,䷽,䷾,䷿'.split(',');
 
@@ -128,7 +129,7 @@ function parseShu(line) {
 	return parseStartToken(line, ['疏　正義曰：'], '疏')
 }
 
-function parse(lines) {
+function parse(lines, requireStrong=false) {
 	let root = null
 	let current = null
 	let currentLine = null
@@ -137,7 +138,23 @@ function parse(lines) {
 	let zhengyiParent = null
 
 	function parseLine(line) {
+		let isStrong = false
+		let isSpan = false
+		if(line.includes('<') || line.includes('&')) {
+			isStrong = line.includes('<strong>')
+			isSpan = line.includes('<span')
+			let node = new JSDOM('<p>'+line+'</p>').window.document.body.firstChild
+			line = node.textContent
+		}
+		if(line.trim() == '') return
+		// 提取注释
 		let res = parseJiJie(line) || parseShiWen(line) || parseBrackets(line) || parseZhu(line)
+		if(!res && requireStrong && !isStrong) {
+			res = {
+				type: TZhu,
+				text: line,
+			} 
+		}
 		if(res) {
 			if(currentLine) {
 				(currentLine.children || (currentLine.children = [])).push(res)
@@ -284,10 +301,10 @@ function parse(lines) {
 	return root
 }
 
-function parseEBook(bookName, dataFolder) {
+function parseEBook(bookName, dataFolder, requireStrong=false) {
 	for (let i = 1; i <= 64; i++) {
 		let lines = require('./' + bookName + '/' + i + '.json')
-		let data = parse(lines)
+		let data = parse(lines, requireStrong)
 		if(!fs.existsSync(dataFolder)) {
 			fs.mkdirSync(dataFolder)
 		}
@@ -298,3 +315,5 @@ function parseEBook(bookName, dataFolder) {
 parseEBook('周易集解', './data/jijie')
 parseEBook('王弼注', './data/wangzhu')
 parseEBook('周易正义[孔颖达疏]', './data/zhengyi')
+parseEBook('易程传[程颐]', './data/ycz', true)
+parseEBook('周易本义[朱熹]', './data/zx', true)

@@ -16,7 +16,8 @@ async function getBody(url) {
 	const list = doc.querySelectorAll(".content .field-name-body p")
 	const texts = []
 	for(let node of list) {
-		texts.push(node.textContent)
+		// texts.push(node.textContent)
+		texts.push(node.innerHTML)
 	}
 	return texts
 }
@@ -49,7 +50,7 @@ async function yz() {
 }
 
 async function zx() {
-	for(let i =1;i<=64;i++) {
+	for(let i =23;i<=64;i++) {
 		console.log('downloading 朱熹', i)
 		await download('https://www.eee-learning.com/book/juicy'+fix2Num(i), '周易本义[朱熹]/'+i+'.json')
 	}
@@ -71,8 +72,14 @@ async function zyjj() {
 
 async function main() {
 	await Promise.all([
-		yz(),wb(),kyd(),
-		zx(),ycz(),zyjj(),
+		/*
+		yz(),
+		wb(),
+		kyd(),
+		zyjj(),
+		ycz(),
+		*/
+		zx(),
 	])
 }
 

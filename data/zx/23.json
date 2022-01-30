@@ -7,6 +7,10 @@
       "up": "艮",
       "lines": [
         {
+          "type": "卦名",
+          "value": " 　剝　　坤下艮上"
+        },
+        {
           "type": "句",
           "value": "剝，不利有攸往。",
           "children": [

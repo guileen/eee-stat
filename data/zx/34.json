@@ -7,6 +7,10 @@
       "up": "震",
       "lines": [
         {
+          "type": "卦名",
+          "value": " 　大壯　　乾下震上"
+        },
+        {
           "type": "句",
           "value": "大壯，利貞。 ",
           "children": [

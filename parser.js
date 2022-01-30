@@ -82,7 +82,7 @@ function parseShiWen(line) {
 }
 
 function parseGuaName(line) {
-	let m = /([\u4dc0-\u4dff])?[\s|　]*([\u4e00-\u9fa5]+)[\s|　]*(.)下(.)上/.exec(line)
+	let m = /([\u4dc0-\u4dff])?[\s|　]*([\u4e00-\u9fa5]+)[\s|　]*(.)\s?下\s?(.)\s?上/.exec(line)
 	// let m = /([\u4e00-\u9fa5]+)卦[\s|　]*(.)下(.)上/.exec(line)
 	if (m) {
 		let name = m[2]
@@ -138,6 +138,9 @@ function parse(lines, dataPath, requireStrong=false) {
 	let zhengyiParent = null
 
 	function parseLine(line) {
+
+		if(line.includes('閱讀古書') || line.includes('文字输入：') || line.includes('文字輸入')) return
+
 		let isStrong = false
 		let isSpan = false
 		if(line.includes('<') || line.includes('&')) {
@@ -174,6 +177,7 @@ function parse(lines, dataPath, requireStrong=false) {
 				current = gua
 				return gua
 			}
+			console.log('Not gua', line)
 		}
 		if(state == null) {
 			// 书信息

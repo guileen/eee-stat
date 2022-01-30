@@ -7,6 +7,10 @@
       "up": "艮",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　艮卦　艮下艮上"
+        },
+        {
           "type": "句",
           "value": "艮其背，",
           "children": [

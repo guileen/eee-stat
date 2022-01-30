@@ -7,6 +7,10 @@
       "up": "巽",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　小畜卦　乾下巽上"
+        },
+        {
           "type": "句",
           "value": "小畜，亨。",
           "children": [

@@ -7,6 +7,10 @@
       "up": "乾",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　遯　艮下乾上"
+        },
+        {
           "type": "句",
           "value": "遯，亨，小利貞。",
           "children": [

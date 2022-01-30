@@ -7,6 +7,10 @@
       "up": "離",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　 大有卦 　乾下離上"
+        },
+        {
           "type": "句",
           "value": "大有，元亨。",
           "children": [

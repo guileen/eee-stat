@@ -7,6 +7,10 @@
       "up": "坎",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　蹇卦　艮下坎上"
+        },
+        {
           "type": "句",
           "value": "蹇，利西南，",
           "children": [

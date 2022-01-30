@@ -7,6 +7,10 @@
       "up": "坎",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　 井 　巽下坎上"
+        },
+        {
           "type": "句",
           "value": "井，改邑不改井，",
           "children": [

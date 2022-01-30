@@ -7,6 +7,10 @@
       "up": "坎",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　井卦　巽下坎上"
+        },
+        {
           "type": "句",
           "value": "井，",
           "children": [

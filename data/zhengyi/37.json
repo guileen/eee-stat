@@ -7,6 +7,10 @@
       "up": "巽",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　家人　離下巽上"
+        },
+        {
           "type": "句",
           "value": "家人，利女貞。",
           "children": [

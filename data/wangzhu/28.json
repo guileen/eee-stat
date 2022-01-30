@@ -7,6 +7,10 @@
       "up": "兌",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　 大過卦 　巽下兌上"
+        },
+        {
           "type": "句",
           "value": "大過，",
           "children": [

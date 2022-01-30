@@ -7,6 +7,10 @@
       "up": "離",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　 鼎卦　巽下離上"
+        },
+        {
           "type": "句",
           "value": "鼎，",
           "children": [

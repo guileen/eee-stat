@@ -7,6 +7,10 @@
       "up": "乾",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　訟卦　坎下乾上"
+        },
+        {
           "type": "句",
           "value": "訟，有孚，",
           "children": [

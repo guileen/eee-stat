@@ -129,7 +129,7 @@ function parseShu(line) {
 	return parseStartToken(line, ['疏　正義曰：'], '疏')
 }
 
-function parse(lines, requireStrong=false) {
+function parse(lines, dataPath, requireStrong=false) {
 	let root = null
 	let current = null
 	let currentLine = null
@@ -141,7 +141,7 @@ function parse(lines, requireStrong=false) {
 		let isStrong = false
 		let isSpan = false
 		if(line.includes('<') || line.includes('&')) {
-			isStrong = line.includes('<strong>')
+			isStrong = line.includes('<strong>') || line.includes('<img')
 			isSpan = line.includes('<span')
 			let node = new JSDOM('<p>'+line+'</p>').window.document.body.firstChild
 			line = node.textContent
@@ -159,6 +159,8 @@ function parse(lines, requireStrong=false) {
 			if(currentLine) {
 				(currentLine.children || (currentLine.children = [])).push(res)
 				// console.log('current', current)
+			} else {
+				console.log(dataPath, 'pre currentLine is empty', line, res)
 			}
 			return
 		}
@@ -167,6 +169,8 @@ function parse(lines, requireStrong=false) {
 			// 卦
 			let gua = parseGuaName(line)
 			if(gua) {
+				currentLine = new Node('卦名', line)
+				gua.lines.push(currentLine)
 				current = gua
 				return gua
 			}
@@ -288,7 +292,7 @@ function parse(lines, requireStrong=false) {
 			return
 		}
 
-		console.log('unknown', line)
+		console.log(dataPath, 'unknown', line)
 	}
 
 	root = new Node()
@@ -303,8 +307,9 @@ function parse(lines, requireStrong=false) {
 
 function parseEBook(bookName, dataFolder, requireStrong=false) {
 	for (let i = 1; i <= 64; i++) {
-		let lines = require('./' + bookName + '/' + i + '.json')
-		let data = parse(lines, requireStrong)
+		let dataPath = './' + bookName + '/' + i + '.json'
+		let lines = require(dataPath)
+		let data = parse(lines, dataPath, requireStrong)
 		if(!fs.existsSync(dataFolder)) {
 			fs.mkdirSync(dataFolder)
 		}
@@ -315,5 +320,5 @@ function parseEBook(bookName, dataFolder, requireStrong=false) {
 parseEBook('周易集解', './data/jijie')
 parseEBook('王弼注', './data/wangzhu')
 parseEBook('周易正义[孔颖达疏]', './data/zhengyi')
-parseEBook('易程传[程颐]', './data/ycz', true)
+parseEBook('易程传[程颐]-fix', './data/ycz', true)
 parseEBook('周易本义[朱熹]', './data/zx', true)

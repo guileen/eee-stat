@@ -7,6 +7,10 @@
       "up": "兌",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　革卦　離下兌上"
+        },
+        {
           "type": "句",
           "value": "革，",
           "children": [

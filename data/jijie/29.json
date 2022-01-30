@@ -7,6 +7,10 @@
       "up": "坎",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　坎卦　坎下坎上"
+        },
+        {
           "type": "句",
           "value": "習坎，有孚。",
           "children": [

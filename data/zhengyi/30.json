@@ -7,6 +7,10 @@
       "up": "離",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　離　離下離上"
+        },
+        {
           "type": "句",
           "value": "離，利貞，亨。",
           "children": [

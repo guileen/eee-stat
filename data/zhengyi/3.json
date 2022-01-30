@@ -7,6 +7,10 @@
       "up": "坎",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　屯卦　震下坎上"
+        },
+        {
           "type": "句",
           "value": "屯，元亨利貞。",
           "children": [

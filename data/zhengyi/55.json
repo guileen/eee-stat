@@ -7,6 +7,10 @@
       "up": "震",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　豐　離下震上"
+        },
+        {
           "type": "句",
           "value": "豐，亨，王假之。",
           "children": [

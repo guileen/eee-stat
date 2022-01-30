@@ -7,6 +7,10 @@
       "up": "坎",
       "lines": [
         {
+          "type": "卦名",
+          "value": "　比卦　坤下坎上"
+        },
+        {
           "type": "句",
           "value": "比吉。",
           "children": [

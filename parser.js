@@ -97,6 +97,22 @@ function parseGuaName(line) {
 			up: m[4],
 			lines: [],
 		}
+	} else {
+		let m = /([\u4dc0-\u4dff])?[\s|　]*([\u4e00-\u9fa5]+)[\s|　]*(.)\s?上\s?(.)\s?下/.exec(line)
+		if (m) {
+			let name = m[2]
+			if (name.endsWith('卦')) {
+				name = name.substring(0, name.length - 1)
+			}
+			return m && {
+				type: TGua,
+				fh: m[1],
+				name: name,
+				down: m[4],
+				up: m[3],
+				lines: [],
+			}
+		}
 	}
 }
 
@@ -139,7 +155,8 @@ function parse(lines, dataPath, requireStrong=false) {
 
 	function parseLine(line) {
 
-		if(line.includes('閱讀古書') || line.includes('文字输入：') || line.includes('文字輸入')) return
+		if(line.includes('閱讀古書') || line.includes('文字输入：') || line.includes('文字輸入') || line.includes('代注本：')) return
+		line = line.trim()
 
 		let isStrong = false
 		let isSpan = false
@@ -244,7 +261,7 @@ function parse(lines, dataPath, requireStrong=false) {
 			}
 		}
 		if(state == TYao || state == TShu) {
-			if(line.length < 40 && (line.startsWith('《象》曰：') || line.startsWith('象曰：'))) {
+			if(line.length < 48 && (line.startsWith('《象》曰：') || line.startsWith('象曰：'))) {
 				currentLine = new Node(TLine, line)
 				current = {
 					type: TXiaoXiang,
@@ -321,8 +338,10 @@ function parseEBook(bookName, dataFolder, requireStrong=false) {
 	}
 }
 
-parseEBook('周易集解', './data/jijie')
-parseEBook('王弼注', './data/wangzhu')
-parseEBook('周易正义[孔颖达疏]', './data/zhengyi')
-parseEBook('易程传[程颐]-fix', './data/ycz', true)
-parseEBook('周易本义[朱熹]', './data/zx', true)
+parseEBook('易传', './data/yz')
+
+// parseEBook('周易集解', './data/jijie')
+// parseEBook('王弼注', './data/wangzhu')
+// parseEBook('周易正义[孔颖达疏]', './data/zhengyi')
+// parseEBook('易程传[程颐]-fix', './data/ycz', true)
+// parseEBook('周易本义[朱熹]', './data/zx', true)
